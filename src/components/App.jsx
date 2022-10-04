@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { ContactForm } from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
+import { Title, SubTitle } from './App.styled';
 
 export class App extends Component {
   state = {
@@ -21,12 +22,24 @@ export class App extends Component {
       name,
       number,
     };
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === addContacts.name.toLowerCase()
+      )
+    ) {
+      return alert(`${addContacts.name} is already in contacts.`);
+    }
     this.setState(({ contacts }) => ({
       contacts: [addContacts, ...contacts],
     }));
   };
   filterContacts = e => {
     this.setState({ filter: e.currentTarget.value });
+  };
+  contactsDelete = idContact => {
+    this.setState(({ contacts }) => ({
+      contacts: contacts.filter(contact => contact.id !== idContact),
+    }));
   };
   render() {
     const { filter } = this.state;
@@ -37,11 +50,14 @@ export class App extends Component {
 
     return (
       <>
-        <h1>Phonebook</h1>
+        <Title>Phonebook</Title>
         <ContactForm onSubmit={this.formHandlerSubmit} />
-        <h2>Contacts</h2>
+        <SubTitle>Contacts</SubTitle>
         <Filter value={filter} onFilterContacts={this.filterContacts} />
-        <ContactList contacts={renderContacts} />
+        <ContactList
+          contacts={renderContacts}
+          onDeleteContack={this.contactsDelete}
+        />
       </>
     );
   }
